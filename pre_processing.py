@@ -30,7 +30,6 @@ def preProcessing(dataset):
     datasetNorm = []
     
     for row in dataset:
-        print(row)
         expr = re.sub(r"[^\w\d\s]", "", row)
         expr = normalize('NFKD',expr).encode('ASCII','ignore').decode('ASCII')
         filt = [w for w in nltk.regexp_tokenize(expr.lower(),"[\S]+") if not w in nltk.corpus.stopwords.words('english')]
@@ -49,10 +48,14 @@ def preProcessing(dataset):
 
 
 def prePerson(dataset):
+
+    
     
     le = preprocessing.LabelEncoder()
 
-    p = le.fit(dataset)
+    p = le.transform(dataset)
+
+    print(p)
 
     return p
 
@@ -64,21 +67,21 @@ def datasetNorm(dataset):
    
    #d = prePerson(dataset['person'].tolist())
    #print(d)
-   dataset['text'] = preProcessing(dataset['text'])
+   dataset['text'] = preProcessing(dataset['text'].tolist())
    
     
    vectorizer = CountVectorizer()
    
-   dataset['text'] = vectorizer.fit_transform(dataset['text'])
+   X = vectorizer.fit_transform(dataset['text'])
    
-   kmeans = KMeans(n_clusters=10, random_state=0).fit(dataset.values)
+   kmeans = KMeans(n_clusters=10, random_state=0).fit(X)
 
-   return kmeans.cluster_centers_
+   return kmeans.cluster_centers_, kmeans.labels_
 
 
 dataset = loadDataset("../simpsons_dataset.csv")
+dataset = dataset.dropna()
 dataset = dataset.head(100)
-#d  = dataset['title'].tolist()[1:100]
-#d = preProcessing(d)
-centers = datasetNorm(dataset)
+centers,labels = datasetNorm(dataset)
 print(centers)
+print(labels)
