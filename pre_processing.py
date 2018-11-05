@@ -73,7 +73,7 @@ def datasetNorm(dataset):
    return kmeans.cluster_centers_
 
 
-dataset = loadDataset("articles.csv")
+dataset = loadDataset("../articles.csv")
 dataset = dataset.head(100)
 #d  = dataset['title'].tolist()[1:100]
 #d = preProcessing(d)
