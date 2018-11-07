@@ -124,11 +124,11 @@ def datasetNorm(dataset):
    #centers, labels = plot_SSE(X)
    
    kmeans = KMeans(n_clusters=8,init='k-means++', max_iter=1000).fit(X)
-   #y_kmeans = kmeans.predict(X)
+   y_kmeans = kmeans.predict(X)
 
-   #centers = kmeans.cluster_centers_
-   #plt.scatter(X[:,0],X[:,1], s=50, cmap='simpson')
-   #plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
+   centers = kmeans.cluster_centers_
+   plt.scatter(X[:,0],X[:,1], s=50, cmap='simpson')
+   plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5)
 
    #kmeans.cluster_centers_, kmeans.labels_
    #centers, labels
@@ -142,4 +142,4 @@ dataset = dataset.dropna()
 #dataset = dataset.head(100)
 centers,labels = datasetNorm(dataset)
 dataset['label'] = labels
-dataset.to_csv('simpson_gruping.csv', sep=';', encoding='utf-8')
+#dataset.to_csv('simpson_gruping.csv', sep=';', encoding='utf-8')
