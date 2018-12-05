@@ -27,8 +27,16 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_predict, KFold,GroupKFold
-from sklearn.preprocessing import label_binarize
-from sklearn.feature_extraction.text import TfidfTransformer
+
+#Keras
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import Dense, Dropout, Activation
+from tensorflow.python.keras.layers import Embedding
+from tensorflow.python.keras.layers import LSTM
+#from keras.models import Sequential
+#from keras.layers import Dense, Dropout, Activation
+#from keras.layers import Embedding
+#from keras.layers import LSTM
 
 args = sys.argv
 dataset_name = args[1]
@@ -124,11 +132,32 @@ def classify(model, train, target):
         
         return predicts,ac,ac_v,p,r,f1,e
 
+def recurrent_LSTM(train, label):
+    X, Y = np.array(train), np.array(label)
+    model = Sequential()
+    model.add(LSTM(32, input_shape=(1415684, 8), return_sequences=True))
+    #model.add(LSTM(32, input_shape=(1415684, 8)))
+    #model.add(LSTM(64, input_dim=1, input_length=1415684, return_sequences=True))
+
+    model.add(Dropout(0.5))
+    model.add(Dense(1))
+    model.add(Activation('sigmoid'))
+
+    model.compile(loss='binary_crossentropy', optimizer='rmsprop')
+
+    model.fit(train, label, batch_size=2000, nb_epoch=11)
+    score = model.evaluate(train, label, batch_size=2000)
+
+    return score
+    
+
 if __name__ == '__main__':
 
     #dataset = open(dataset_name,'r', encoding="utf-8")
 
     dataset = pd.read_csv(dataset_name, sep=';', encoding='utf-8')
+    dataset.columns = ['text','label']
+    dataset = dataset.dropna()
 
     print(dataset.head())
 
@@ -137,11 +166,17 @@ if __name__ == '__main__':
     new_dataset = []
     
         
-    for line in dataset:
-
-        data = line.rstrip()
+    for data in dataset['text']:
 
         pre_data = preprocessing(data)
-
+        new_dataset.append(embeddings(pre_data))
     
-    dataset.close()
+
+    dataset_X = new_dataset
+    dataset_Y = dataset['label']
+
+    score = recurrent_LSTM(dataset_X,dataset_Y)
+
+    print(score)
+
+   
