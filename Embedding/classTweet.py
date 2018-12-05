@@ -51,7 +51,9 @@ def embeddings(data):
     for token in data:
         vec = model[token].tolist()
         word_vec.append(vec)
-    
+
+    print(word_vec)
+
     print("Word Embeddings concluido")
 
     return word_vec
@@ -73,19 +75,19 @@ def preprocessing(data):
     new_data = []
 
     #lematizacao
-    lm = WordNetLemmatizer()
+    #lm = WordNetLemmatizer()
 
-    for token in tokens:
+    #for token in tokens:
 
-        lema = lm.lemmatize(token)
+    #    lema = lm.lemmatize(token)
 
-        new_data.append(lema)
+    #    new_data.append(lema)
 
 
     print("Pre-processamento concluido")
     
 
-    return new_data
+    return tokens
 
 def classify(model, train, target):
 
@@ -135,8 +137,8 @@ def classify(model, train, target):
 def recurrent_LSTM(train, label):
     X, Y = np.array(train), np.array(label)
     model = Sequential()
-    model.add(LSTM(32, input_shape=(1415684, 8), return_sequences=True))
-    #model.add(LSTM(32, input_shape=(1415684, 8)))
+    #model.add(LSTM(32, input_shape=(1415684, 8), return_sequences=True))
+    model.add(LSTM(30, input_shape=(50, )))
     #model.add(LSTM(64, input_dim=1, input_length=1415684, return_sequences=True))
 
     model.add(Dropout(0.5))
@@ -159,8 +161,6 @@ if __name__ == '__main__':
     dataset.columns = ['text','label']
     dataset = dataset.dropna()
 
-    print(dataset.head())
-
     #arquivo = open(output,'w', encoding="utf-8")
 
     new_dataset = []
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     dataset_X = new_dataset
     dataset_Y = dataset['label']
 
-    score = recurrent_LSTM(dataset_X,dataset_Y)
+    #score = recurrent_LSTM(dataset_X,dataset_Y)
 
     print(score)
 
